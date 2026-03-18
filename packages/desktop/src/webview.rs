@@ -488,6 +488,7 @@ impl WebviewInstance {
         let webview = {
             use tao::platform::unix::WindowExtUnix;
             use wry::WebViewBuilderExtUnix;
+            // GTK4: default_vbox() returns a gtk4::Box which WebViewBuilderExtUnix::build_gtk accepts
             let vbox = window.default_vbox().unwrap();
             webview.build_gtk(vbox)
         };

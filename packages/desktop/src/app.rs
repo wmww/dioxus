@@ -613,16 +613,15 @@ impl App {
                 if std::path::Path::new("/dev/dri").exists()
                     && std::env::var("XDG_SESSION_TYPE").unwrap_or_default() == "wayland"
                 {
-                    // Gnome Webkit is currently buggy under Wayland and KDE, so we will run it with XWayland mode.
+                    // Disable DMA buffer renderer on Wayland to avoid rendering issues
+                    // with some GPU drivers (especially NVIDIA).
                     // See: https://github.com/DioxusLabs/dioxus/issues/3667
                     unsafe {
-                        // Disable explicit sync for NVIDIA drivers on Linux when using Way
                         std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
                     }
                 }
-                unsafe {
-                    std::env::set_var("GDK_BACKEND", "x11");
-                }
+                // Note: With GTK4, we no longer force GDK_BACKEND=x11. GTK4 has improved
+                // native Wayland support and webkit6 works natively on Wayland.
             });
         }
     }

@@ -49,10 +49,13 @@ pub fn init_tray_icon(menu: DioxusTrayMenu, icon: Option<DioxusTrayIcon>) -> Dio
 pub fn default_tray_icon() -> DioxusTrayMenu {
     #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
     {
-        use tray_icon::menu::{Menu, PredefinedMenuItem};
+        use tray_icon::menu::{Menu, MenuItem};
         let tray_menu = Menu::new();
+        // PredefinedMenuItem::quit is not supported on Linux GTK4, so use a
+        // regular MenuItem instead. On other platforms we could use the
+        // predefined variant, but a regular item keeps behavior consistent.
         tray_menu
-            .append_items(&[&PredefinedMenuItem::quit(None)])
+            .append_items(&[&MenuItem::new("Quit", true, None)])
             .unwrap();
         tray_menu
     }

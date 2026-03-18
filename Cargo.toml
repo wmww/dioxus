@@ -343,11 +343,11 @@ winnow = "0.7.14"
 
 # desktop
 wry = { version = "0.53.5", default-features = false }
-tao = { version = "0.34.0", features = ["rwh_05"] }
+tao = { version = "0.34.5", features = ["rwh_05"] }
 infer = "0.19.0"
 dunce = "1.0.5"
 percent-encoding = "2.3.1"
-muda = "0.17.0"
+muda = "0.17"
 tray-icon = "0.21.0"
 open = "5.3.2"
 webbrowser = "1.0"
@@ -417,6 +417,13 @@ inherits = "dev"
 
 [profile.android-dev]
 inherits = "dev"
+
+# Patch crates-io dependencies with GTK4-compatible forks for Linux desktop support
+[patch.crates-io]
+tao = { git = "https://github.com/rmakestrash-jpg/tao.git", branch = "gtk4-v0.34.5" }
+wry = { git = "https://github.com/rmakestrash-jpg/wry.git", branch = "gtk4" }
+muda = { git = "https://github.com/rmakestrash-jpg/muda.git", branch = "feat/gtk4" }
+tray-icon = { git = "https://github.com/rmakestrash-jpg/tray-icon.git", branch = "feat/gtk4" }
 
 # This is a "virtual package"
 # It is not meant to be published, but is used so "cargo run --example XYZ" works properly

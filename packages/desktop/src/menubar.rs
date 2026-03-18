@@ -43,7 +43,11 @@ mod desktop_platforms {
         #[cfg(target_os = "linux")]
         {
             use tao::platform::unix::WindowExtUnix;
-            menu.init_for_gtk_window(window.gtk_window(), window.default_vbox())
+            // GTK4: gtk_window() returns a custom ApplicationWindow subclass that must be
+            // upcast to gtk::Window for muda compatibility
+            use gtk::prelude::Cast;
+            let gtk_win: &gtk::Window = window.gtk_window().upcast_ref();
+            menu.init_for_gtk_window(gtk_win, window.default_vbox())
                 .unwrap();
         }
 
@@ -59,6 +63,10 @@ mod desktop_platforms {
         // since it is uncommon on windows to have an "application menu"
         // we add a "window" menu to be more consistent across platforms with the standard menu
         let window_menu = Submenu::new("Window", true);
+
+        // hide/hide_others/show_all/quit are macOS-only predefined items and are
+        // not supported on Linux (GTK4 muda backend panics on them).
+        #[cfg(not(target_os = "linux"))]
         window_menu
             .append_items(&[
                 &PredefinedMenuItem::fullscreen(None),
@@ -71,6 +79,17 @@ mod desktop_platforms {
                 &PredefinedMenuItem::close_window(None),
                 &PredefinedMenuItem::separator(),
                 &PredefinedMenuItem::quit(None),
+            ])
+            .unwrap();
+
+        #[cfg(target_os = "linux")]
+        window_menu
+            .append_items(&[
+                &PredefinedMenuItem::fullscreen(None),
+                &PredefinedMenuItem::separator(),
+                &PredefinedMenuItem::maximize(None),
+                &PredefinedMenuItem::minimize(None),
+                &PredefinedMenuItem::close_window(None),
             ])
             .unwrap();
 
